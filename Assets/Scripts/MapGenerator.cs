@@ -3,15 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class MapGenerator : MonoBehaviour
 {
     public GameObject chunkPrefab;
     public Vector3Int mapSize;
     public int voxelResolution = 8;
     public float isoLevel = 0.5f;
-    private List<ChunkGenerator> chunkList = new List<ChunkGenerator>();
+    private List<ChunkGenerator> chunkList;
 
     private void Awake(){
+        chunkList = new List<ChunkGenerator>();
+
+        //GenerateChunks();
+
+        //DrawChunks();
+    }
+
+    void Update()
+    {
+        DestroyChunks();
+        chunkList = new List<ChunkGenerator>();
+
         GenerateChunks();
 
         DrawChunks();
@@ -90,5 +103,13 @@ public class MapGenerator : MonoBehaviour
         intPos.y = (int)pos.y;
         intPos.z = (int)pos.z;
         return intPos.z + intPos.y * mapSize.z + intPos.x * mapSize.z * mapSize.y;
+    }
+
+    private void DestroyChunks(){
+        ChunkGenerator[] oldChunks = FindObjectsOfType<ChunkGenerator>();
+        foreach (ChunkGenerator chunk in oldChunks)
+        {
+            DestroyImmediate(chunk.gameObject);
+        }
     }
 }

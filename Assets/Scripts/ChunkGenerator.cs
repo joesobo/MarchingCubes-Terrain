@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//[ExecuteInEditMode]
 public class ChunkGenerator : MonoBehaviour
 {
     private int resolution = 2;
@@ -28,14 +27,14 @@ public class ChunkGenerator : MonoBehaviour
         densityGenerator = FindObjectOfType<NoiseGenerator>();
 
         meshFilter = GetComponent<MeshFilter>();
-        if (meshFilter.mesh == null)
+        if (meshFilter.sharedMesh == null)
         {
-            meshFilter.mesh = new Mesh();
+            meshFilter.sharedMesh = new Mesh();
         }
 
         voxelSize = 1f / resolution;
         voxelList = new List<Voxel>();
-        meshFilter.mesh = new Mesh();
+        meshFilter.sharedMesh = new Mesh();
 
         GenerateVoxelNoise();
     }
@@ -44,7 +43,7 @@ public class ChunkGenerator : MonoBehaviour
     {
         voxelSize = 1f / resolution;
         voxelList = new List<Voxel>();
-        meshFilter.mesh = new Mesh();
+        meshFilter.sharedMesh = new Mesh();
 
         GenerateVoxelNoise();
         RecreateMesh();
@@ -120,7 +119,7 @@ public class ChunkGenerator : MonoBehaviour
     //completely doubles the triangles, inverting them to be seen from the back
     private void CreateBackMesh()
     {
-        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        Mesh mesh = GetComponent<MeshFilter>().sharedMesh;
         MeshCollider meshCollider = GetComponent<MeshCollider>();
         Vector3[] vertices = mesh.vertices;
         Vector2[] uv = mesh.uv;

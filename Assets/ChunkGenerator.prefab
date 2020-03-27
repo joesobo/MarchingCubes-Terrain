@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8347359248516222245}
-  - component: {fileID: 8347359248516222246}
   - component: {fileID: 2684731737628133571}
   - component: {fileID: 9182391339404618282}
   - component: {fileID: -6070736298530262558}
+  - component: {fileID: 8347359248516222246}
   m_Layer: 0
   m_Name: ChunkGenerator
   m_TagString: Untagged
@@ -34,25 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8347359248516222246
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8347359248516222247}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7aee9cdd96ac57a408a2bece8769ac77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  xNeighbor: {fileID: 0}
-  yNeighbor: {fileID: 0}
-  zNeighbor: {fileID: 0}
-  xyNeighbor: {fileID: 0}
-  yzNeighbor: {fileID: 0}
-  xzNeighbor: {fileID: 0}
-  xyzNeighbor: {fileID: 0}
 --- !u!64 &2684731737628133571
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -114,3 +95,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &8347359248516222246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8347359248516222247}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aee9cdd96ac57a408a2bece8769ac77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  xNeighbor: {fileID: 0}
+  yNeighbor: {fileID: 0}
+  zNeighbor: {fileID: 0}
+  xyNeighbor: {fileID: 0}
+  yzNeighbor: {fileID: 0}
+  xzNeighbor: {fileID: 0}
+  xyzNeighbor: {fileID: 0}
