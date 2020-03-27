@@ -190,13 +190,12 @@ public class ChunkGenerator : MonoBehaviour
     private void March(Vector3 pos)
     {
         List<Voxel> cubeCorners = new List<Voxel>();
-        Voxel a, b, c, d, e, f, g, h;
-
-        //MarchEdges(pos);
+        Voxel a, b, c, d, e, f, g, h;        
 
         //corner and edge position
         if (pos.z >= resolution - 1 || pos.x >= resolution - 1 || pos.y >= resolution - 1)
         {
+            MarchEdges(pos);
             return;
         }
         else
@@ -250,6 +249,218 @@ public class ChunkGenerator : MonoBehaviour
                 tri.posC = InterpolateVerts(cubeCorners[a2], cubeCorners[b2]);
                 triangles.Add(tri);
             }
+        }
+    }
+
+    //marches along the edge of a chunk checking its neighbors
+    private void MarchEdges(Vector3 pos)
+    {
+        Voxel a, b, c, d, e, f, g, h;
+
+        //xyz
+        if (pos.x >= resolution - 1 && pos.y >= resolution - 1 && pos.z >= resolution - 1 && xNeighbor != null && yNeighbor != null && zNeighbor != null && xyNeighbor != null && xzNeighbor != null && yzNeighbor != null && xyzNeighbor != null)
+        {
+            a = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z))].Copy();
+            b = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, 0))].Copy();
+            c = xzNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, 0))].Copy();
+            d = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, pos.z))].Copy();
+            e = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, pos.z))].Copy();
+            f = yzNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, 0))].Copy();
+            g = xyzNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, 0, 0))].Copy();
+            h = xyNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, 0, pos.z))].Copy();
+
+            b.position.z = 1;
+            c.position.x = 1;
+            c.position.z = 1;
+            d.position.x = 1;
+            e.position.y = 1;
+            f.position.y = 1;
+            f.position.z = 1;
+            g.position.y = 1;
+            g.position.z = 1;
+            g.position.x = 1;
+            h.position.x = 1;
+            h.position.y = 1;
+
+            MarchGap(a, b, c, d, e, f, g, h);
+        }
+
+        //yz
+        else if (pos.x < resolution - 1 && pos.y >= resolution - 1 && pos.z >= resolution - 1 && yNeighbor != null && zNeighbor != null && yzNeighbor != null)
+        {
+            a = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z))].Copy();
+            b = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, 0))].Copy();
+            c = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y, 0))].Copy();
+            d = voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y, pos.z))].Copy();
+            e = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, pos.z))].Copy();
+            f = yzNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, 0))].Copy();
+            g = yzNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, 0, 0))].Copy();
+            h = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, 0, pos.z))].Copy();
+
+            b.position.z = 1;
+            c.position.z = 1;
+            e.position.y = 1;
+            h.position.y = 1;
+            f.position.y = 1;
+            g.position.y = 1;
+            f.position.z = 1;
+            g.position.z = 1;
+
+            MarchGap(a, b, c, d, e, f, g, h);
+        }
+
+        //xz
+        else if (pos.x >= resolution - 1 && pos.y < resolution - 1 && pos.z >= resolution - 1 && xNeighbor != null && zNeighbor != null && xzNeighbor != null)
+        {
+            a = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z))].Copy();
+            b = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, 0))].Copy();
+            c = xzNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, 0))].Copy();
+            d = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, pos.z))].Copy();
+            e = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y + 1, pos.z))].Copy();
+            f = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y + 1, 0))].Copy();
+            g = xzNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y + 1, 0))].Copy();
+            h = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y + 1, pos.z))].Copy();
+
+            b.position.z = 1;
+            c.position.x = 1;
+            c.position.z = 1;
+            d.position.x = 1;
+            f.position.z = 1;
+            g.position.x = 1;
+            g.position.z = 1;
+            h.position.x = 1;
+
+            MarchGap(a, b, c, d, e, f, g, h);
+        }
+
+        //xy
+        else if (pos.x >= resolution - 1 && pos.y >= resolution - 1 && pos.z < resolution - 1 && xNeighbor != null && yNeighbor != null && xyNeighbor != null)
+        {
+            a = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z))].Copy();
+            b = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z + 1))].Copy();
+            c = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, pos.z + 1))].Copy();
+            d = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, pos.z))].Copy();
+            e = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, pos.z))].Copy();
+            f = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, pos.z + 1))].Copy();
+            g = xyNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, 0, pos.z + 1))].Copy();
+            h = xyNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, 0, pos.z))].Copy();
+
+            c.position.x = 1;
+            d.position.x = 1;
+            e.position.y = 1;
+            f.position.y = 1;
+            g.position.x = 1;
+            h.position.x = 1;
+            g.position.y = 1;
+            h.position.y = 1;
+
+            MarchGap(a, b, c, d, e, f, g, h);
+        }
+
+        //z
+        else if (pos.x < resolution - 1 && pos.y < resolution - 1 && pos.z >= resolution - 1 && zNeighbor != null)
+        {
+            a = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z))].Copy();
+            b = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, 0))].Copy();
+            c = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y, 0))].Copy();
+            d = voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y, pos.z))].Copy();
+            e = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y + 1, pos.z))].Copy();
+            f = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y + 1, 0))].Copy();
+            g = zNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y + 1, 0))].Copy();
+            h = voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y + 1, pos.z))].Copy();
+
+            b.position.z = 1;
+            c.position.z = 1;
+            f.position.z = 1;
+            g.position.z = 1;
+
+            MarchGap(a, b, c, d, e, f, g, h);
+        }
+
+        //y
+        else if (pos.x < resolution - 1 && pos.y >= resolution - 1 && pos.z < resolution - 1 && yNeighbor != null)
+        {
+            a = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z))].Copy();
+            b = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z + 1))].Copy();
+            c = voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y, pos.z + 1))].Copy();
+            d = voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, pos.y, pos.z))].Copy();
+            e = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, pos.z))].Copy();
+            f = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x, 0, pos.z + 1))].Copy();
+            g = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, 0, pos.z + 1))].Copy();
+            h = yNeighbor.voxelList[ConvertCoordToIndex(new Vector3(pos.x + 1, 0, pos.z))].Copy();
+
+            e.position.y = 1;
+            f.position.y = 1;
+            g.position.y = 1;
+            h.position.y = 1;
+
+            MarchGap(a, b, c, d, e, f, g, h);
+        }
+
+        //x
+        else if (pos.x >= resolution - 1 && pos.y < resolution - 1 && pos.z < resolution - 1 && xNeighbor != null)
+        {
+            a = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z))].Copy();
+            b = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y, pos.z + 1))].Copy();
+            c = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, pos.z + 1))].Copy();
+            d = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y, pos.z))].Copy();
+            e = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y + 1, pos.z))].Copy();
+            f = voxelList[ConvertCoordToIndex(new Vector3(pos.x, pos.y + 1, pos.z + 1))].Copy();
+            g = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y + 1, pos.z + 1))].Copy();
+            h = xNeighbor.voxelList[ConvertCoordToIndex(new Vector3(0, pos.y + 1, pos.z))].Copy();
+
+            c.position.x = 1;
+            d.position.x = 1;
+            g.position.x = 1;
+            h.position.x = 1;
+
+            MarchGap(a, b, c, d, e, f, g, h);
+        }
+    }
+
+    //uses 8 voxels from corners of cube to create triangles from isoLevel
+    private void MarchGap(Voxel a, Voxel b, Voxel c, Voxel d, Voxel e, Voxel f, Voxel g, Voxel h)
+    {
+        //finds 8 corner voxels of the cube based on coordinates
+        List<Voxel> cubeCorners = new List<Voxel>
+        {
+            a,b,c,d,e,f,g,h
+        };
+
+        //finds special combination of 256
+        int cubeIndex = 0;
+        if (cubeCorners[0].noiseVal > isoLevel) cubeIndex |= 1;
+        if (cubeCorners[1].noiseVal > isoLevel) cubeIndex |= 2;
+        if (cubeCorners[2].noiseVal > isoLevel) cubeIndex |= 4;
+        if (cubeCorners[3].noiseVal > isoLevel) cubeIndex |= 8;
+        if (cubeCorners[4].noiseVal > isoLevel) cubeIndex |= 16;
+        if (cubeCorners[5].noiseVal > isoLevel) cubeIndex |= 32;
+        if (cubeCorners[6].noiseVal > isoLevel) cubeIndex |= 64;
+        if (cubeCorners[7].noiseVal > isoLevel) cubeIndex |= 128;
+
+        //all corners are active
+        if (cubeIndex == 255 || cubeIndex == 0)
+        {
+            return;
+        }
+
+        //looks up tri table for combination and decides which edges to add for each triangle
+        for (int i = 0; vTables.triTable[cubeIndex, i] != -1; i += 3)
+        {
+            int a0 = vTables.cornerIndexAFromEdge[vTables.triTable[cubeIndex, i]];
+            int b0 = vTables.cornerIndexBFromEdge[vTables.triTable[cubeIndex, i]];
+
+            int a1 = vTables.cornerIndexAFromEdge[vTables.triTable[cubeIndex, i + 1]];
+            int b1 = vTables.cornerIndexBFromEdge[vTables.triTable[cubeIndex, i + 1]];
+
+            int a2 = vTables.cornerIndexAFromEdge[vTables.triTable[cubeIndex, i + 2]];
+            int b2 = vTables.cornerIndexBFromEdge[vTables.triTable[cubeIndex, i + 2]];
+
+            Triangle tri = new Triangle();
+            tri.posA = InterpolateVerts(cubeCorners[a0], cubeCorners[b0]);
+            tri.posB = InterpolateVerts(cubeCorners[a1], cubeCorners[b1]);
+            tri.posC = InterpolateVerts(cubeCorners[a2], cubeCorners[b2]);
+            triangles.Add(tri);
         }
     }
 }
