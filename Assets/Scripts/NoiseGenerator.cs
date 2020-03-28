@@ -2,15 +2,52 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum NoiseMethodType
+{
+    Random,
+    Perlin2D,
+    Perlin3D,
+    SimplexValue
+}
+
 public class NoiseGenerator : MonoBehaviour
 {
-    [Header ("Noise")]
+    public NoiseMethodType noiseMethod;
+
+    [Header("Perlin 3D Noise")]
     public int mySeed = 0;
 
-    public float Generate(Vector3 pos){
-        return PerlinNoise3D(pos);
+    public float Generate(Vector3 pos)
+    {
+        if (noiseMethod == NoiseMethodType.Perlin2D)
+        {
+            return Perlin(pos);
+        }
+        else if (noiseMethod == NoiseMethodType.Perlin3D)
+        {
+            return PerlinNoise3D(pos);
+        }
+        else if (noiseMethod == NoiseMethodType.SimplexValue)
+        {
+            //TODO
+        }
+        return RandomNoise();
     }
 
+    //RANDOM
+    private float RandomNoise()
+    {
+        return UnityEngine.Random.Range(0f, 1f);
+    }
+
+    //PERLIN 2D
+    private float Perlin(Vector3 pos)
+    {
+
+        return Mathf.PerlinNoise(pos.x, pos.z) - pos.y;
+    }
+
+    //PERLIN 3D
     //returns a perlin noise value between 1 and 0 based on 3D coords
     private float PerlinNoise3D(Vector3 pos)
     {
@@ -31,4 +68,4 @@ public class NoiseGenerator : MonoBehaviour
     {
         return Mathf.Sin(Mathf.PI * Mathf.PerlinNoise(a + mySeed, b + mySeed));
     }
-}   
+}

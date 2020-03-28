@@ -12,6 +12,8 @@ public class MapGenerator : MonoBehaviour
     public float isoLevel = 0.5f;
     private List<ChunkGenerator> chunkList;
 
+    public Vector3 offset = Vector3.zero;
+
     private void Awake(){
         chunkList = new List<ChunkGenerator>();
 
@@ -47,7 +49,7 @@ public class MapGenerator : MonoBehaviour
                     chunk.transform.parent = transform;
 
                     ChunkGenerator chunkGenerator = chunk.GetComponent<ChunkGenerator>();
-                    chunkGenerator.Initialize(voxelResolution, isoLevel, chunkPosition, mapSize);
+                    chunkGenerator.Initialize(voxelResolution, isoLevel, chunkPosition, mapSize, offset);
                     chunkList.Add(chunkGenerator);
 
                     //Assign Neighbors

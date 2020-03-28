@@ -16,13 +16,15 @@ public class ChunkGenerator : MonoBehaviour
     private float voxelSize;
     private Vector3Int chunkPosition;
     private Vector3Int mapSize;
+    private Vector3 offset;
 
-    public void Initialize(int resolution, float isoLevel, Vector3Int chunkPos, Vector3Int mapSize)
+    public void Initialize(int resolution, float isoLevel, Vector3Int chunkPos, Vector3Int mapSize, Vector3 offset)
     {
         this.resolution = resolution;
         this.isoLevel = isoLevel;
         this.chunkPosition = chunkPos;
         this.mapSize = mapSize;
+        this.offset = offset;
 
         densityGenerator = FindObjectOfType<NoiseGenerator>();
 
@@ -161,6 +163,7 @@ public class ChunkGenerator : MonoBehaviour
         mesh.normals = newNorms;
         mesh.triangles = newTris; // assign triangles last!
         meshCollider.sharedMesh = mesh;
+        mesh.RecalculateNormals();
     }
 
     private void GenerateVoxelNoise()
@@ -172,12 +175,13 @@ public class ChunkGenerator : MonoBehaviour
                 for (int z = 0; z < resolution; z++)
                 {
                     Vector3 pos = new Vector3(x, y, z);
+                
                     Vector3 localPos = pos * voxelSize;
                     Vector3 worldPos = localPos + chunkPosition;
-                    worldPos.x /= mapSize.x;
-                    worldPos.y /= mapSize.y;
-                    worldPos.z /= mapSize.z;
-                    float noise = densityGenerator.Generate(worldPos);
+                    //worldPos.x /= mapSize.x;
+                    //worldPos.y /= mapSize.y;
+                    //worldPos.z /= mapSize.z;
+                    float noise = densityGenerator.Generate(worldPos + offset);
 
                     Voxel voxel = new Voxel(x * voxelSize, y * voxelSize, z * voxelSize, noise, voxelSize);
                     voxelList.Add(voxel);
@@ -189,7 +193,7 @@ public class ChunkGenerator : MonoBehaviour
     private void March(Vector3 pos)
     {
         List<Voxel> cubeCorners = new List<Voxel>();
-        Voxel a, b, c, d, e, f, g, h;        
+        Voxel a, b, c, d, e, f, g, h;
 
         //corner and edge position
         if (pos.z >= resolution - 1 || pos.x >= resolution - 1 || pos.y >= resolution - 1)
@@ -461,5 +465,27 @@ public class ChunkGenerator : MonoBehaviour
             tri.posC = InterpolateVerts(cubeCorners[a2], cubeCorners[b2]);
             triangles.Add(tri);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        //draw cube outline
+        Gizmos.color = Color.black;
+        int x = chunkPosition.x;
+        int y = chunkPosition.y;
+        int z = chunkPosition.z;
+        Vector3 startPos = chunkPosition;
+        Gizmos.DrawLine(startPos, new Vector3(x, y, z + 1));
+        Gizmos.DrawLine(startPos, new Vector3(x, y + 1, z));
+        Gizmos.DrawLine(startPos, new Vector3(x + 1, y, z));
+        Gizmos.DrawLine(new Vector3(x + 1, y, z), new Vector3(x + 1, y + 1, z));
+        Gizmos.DrawLine(new Vector3(x + 1, y, z), new Vector3(x + 1, y, z + 1));
+        Gizmos.DrawLine(new Vector3(x, y + 1, z), new Vector3(x, y + 1, z + 1));
+        Gizmos.DrawLine(new Vector3(x, y + 1, z), new Vector3(x + 1, y + 1, z));
+        Gizmos.DrawLine(new Vector3(x, y, z + 1), new Vector3(x, y + 1, z + 1));
+        Gizmos.DrawLine(new Vector3(x, y, z + 1), new Vector3(x + 1, y, z + 1));
+        Gizmos.DrawLine(new Vector3(x + 1, y, z + 1), new Vector3(x + 1, y + 1, z + 1));
+        Gizmos.DrawLine(new Vector3(x, y + 1, z + 1), new Vector3(x + 1, y + 1, z + 1));
+        Gizmos.DrawLine(new Vector3(x + 1, y + 1, z), new Vector3(x + 1, y + 1, z + 1));
     }
 }
