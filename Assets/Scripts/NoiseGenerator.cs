@@ -7,7 +7,9 @@ public enum NoiseMethodType
     Random,
     Perlin2D,
     Perlin3D,
-    SimplexValue
+    RealWorldTest1,
+    Simplex2D,
+    Simplex3D
 }
 
 public class NoiseGenerator : MonoBehaviour
@@ -16,6 +18,23 @@ public class NoiseGenerator : MonoBehaviour
 
     [Header("Perlin 3D Noise")]
     public int mySeed = 0;
+
+    [Header("Real World Noise")]
+    public int worldSeed = 0;
+    //First Layer
+    public bool active1 = true;
+    public float scale1 = 2.5f;
+    [Range(-1, 1)]
+    public float heightScale1 = 1;
+    //Second Layer
+    public bool active2 = false;
+    public float scale2 = 4;
+    [Range(-1, 1)]
+    public float heightScale2 = 1;
+
+    [Header("Simple Noise")]
+    private SimplexNoise simplexNoise;
+
 
     public float Generate(Vector3 pos)
     {
@@ -27,11 +46,52 @@ public class NoiseGenerator : MonoBehaviour
         {
             return PerlinNoise3D(pos);
         }
-        else if (noiseMethod == NoiseMethodType.SimplexValue)
+        else if (noiseMethod == NoiseMethodType.RealWorldTest1)
         {
-            //TODO
+            return AvgNoise(pos);
+        }
+        else if (noiseMethod == NoiseMethodType.Simplex2D)
+        {
+            if (simplexNoise == null)
+            {
+                simplexNoise = new SimplexNoise();
+            }
+            return (float)simplexNoise.Evaluate(pos.x, pos.z) + pos.y;
+        }
+        else if (noiseMethod == NoiseMethodType.Simplex3D)
+        {
+            if (simplexNoise == null)
+            {
+                simplexNoise = new SimplexNoise();
+            }
+            return (float)simplexNoise.Evaluate(pos.x, pos.y, pos.z) + pos.y;
         }
         return RandomNoise();
+    }
+
+    //REAL WORLD
+    private float AvgNoise(Vector3 pos)
+    {
+        float n1;
+        float n2;
+        if (active1)
+        {
+            n1 = Mathf.PerlinNoise((pos.x * scale1) + worldSeed, (pos.z * scale1) + worldSeed) - (heightScale1 * pos.y);
+        }
+        else
+        {
+            n1 = 1;
+        }
+        if (active2)
+        {
+            n2 = Mathf.PerlinNoise((pos.x * scale2) + (2 * worldSeed), (pos.z * scale2) + (2 * worldSeed)) - (heightScale2 * pos.y);
+        }
+        else
+        {
+            n2 = 1;
+        }
+
+        return (n1 + n2) / 2f;
     }
 
     //RANDOM
